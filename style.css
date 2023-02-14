@@ -1,0 +1,57 @@
+body {
+    background-color: #444;
+}
+
+img {
+    padding-top: 7px;
+    padding-left: 7px;
+}
+
+.image {
+    margin-left: 40%;
+    margin-top: 15px;
+    margin-right: 4%;
+    margin-bottom: 15px;
+    width: 55px;
+    height: 55px;
+    background-color: #555;
+    border-radius: 20px;
+    float:left
+}
+
+.image:hover {
+    background-color: purple;
+    transition-duration: 1s;
+    animation-duration: 1s;
+}
+
+.footer-color-selector-item {
+    margin-top: 30px;
+	width: 25px;
+	height: 25px;
+	background: rgba(34,34,34,.1);
+	float: left;
+	border-radius: 50%;
+	position: relative;
+	margin-right: 10px;
+	cursor: pointer;
+}
+
+.round {
+    margin-left: 200px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    float:left;
+    cursor: pointer;
+}
+
+.navbar {
+    background-color: #333;
+    overflow: hidden;
+    position:fixed;
+    bottom: 0;
+    width: 100%;
+}
