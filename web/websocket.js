@@ -38,7 +38,7 @@ class WebSocket {
     registerRoots() {
         this.app.get('/', (req, res) => {
             res.render('index', {
-                title: "Hello"
+                title: "r/place"
             });
         });
 
