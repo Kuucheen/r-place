@@ -4,14 +4,12 @@ const socket = io();
 
 let radius = 20;
 let currentColor = "rgb(217, 217, 217)";
-let lastCached = [];
 let offsetX = 0;
 let offsetY = 0;
+let imageCache = [];
+let width = 1000, height = 1000;
 
 const canvas = document.getElementById("canvas");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
 const ctx = canvas.getContext("2d");
 
 function selectColor(event) {
@@ -20,12 +18,16 @@ function selectColor(event) {
 }
 
 
-socket.on("update", (data) => {
-    lastCached.push(data);
-    drawRect(data.x, data.y, data.color);
+socket.on("update", (x, y, colorArr) => {
+    const i = (x * width + y) * 4;
+    imageCache[i] = colorArr[0];
+    imageCache[i + 1] = colorArr[1];
+    imageCache[i + 2] = colorArr[2];
+    redrawAll();
 });
-socket.on("updateAll", (data) => {
-    lastCached = data;
+socket.on("updateAll", buffer => {
+    console.log(buffer);
+    imageCache = new Uint8Array(buffer);
     redrawAll();
 });
 
@@ -48,11 +50,11 @@ function createListeners() {
     canvas.addEventListener("mouseup", e => {
         e.preventDefault();
         if (!move)
-            socket.emit("mouseDown", {
-                "x": Math.floor(e.clientX / radius) - offsetX,
-                "y": Math.floor(e.clientY / radius) - offsetY,
-                "color": currentColor
-            })
+            socket.emit("mouseDown",
+                Math.floor(e.clientX / radius) - offsetX,
+                Math.floor(e.clientY / radius) - offsetY,
+                hexToRgb(currentColor)
+            )
 
         if (e.button !== 1)
             return;
@@ -63,22 +65,31 @@ function createListeners() {
         if (!move)
             return;
 
-        offsetX += e.movementX / radius * 10;
-        offsetY += e.movementY / radius * 10;
+        offsetX += e.movementX;
+        offsetY += e.movementY;
         redrawAll();
     });
 }
 
 function redrawAll() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawGrid(radius);
-    lastCached.forEach(shape => drawRect(shape.x, shape.y, shape.color));
+
+    //drawGrid(radius);
+    for (let i = 0; i < window.innerWidth / radius; i++) {
+        for (let j = 0; j < window.innerHeight / radius; j++) {
+            drawRect(i * radius, j * radius, getPixel(i + offsetX / radius, j + offsetY / radius))
+        }
+    }
+}
+
+function getPixel(x, y) {
+    const i = (x * width + y) * 4;
+    return `rgb(${imageCache[i]}, ${imageCache[i + 1]}, ${imageCache[i + 2]}`;
 }
 
 function drawGrid(level) {
     let width = canvas.width;
     let height = canvas.height;
-    console.log(canvas.width);
     ctx.strokeStyle = "rgb(100, 100, 100)";
     for (let i = 0; i < width; i += level)
         ctx.strokeRect(i + offsetX % level, 0, 0, height);
@@ -89,7 +100,7 @@ function drawGrid(level) {
 
 function drawRect(x, y, color) {
     ctx.beginPath();
-    ctx.rect(x * radius + offsetX, y * radius + offsetY, radius, radius);
+    ctx.rect(x, y, radius, radius);
     ctx.fillStyle = color;
     ctx.fill();
     ctx.closePath();
@@ -98,5 +109,15 @@ function drawRect(x, y, color) {
 function clamp(value, min, max) {
     return Math.min(Math.max(value, min), max);
 }
+
+function hexToRgb(hex) {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? [
+        parseInt(result[1], 16),
+        parseInt(result[2], 16),
+        parseInt(result[3], 16)
+    ] : [0, 0, 0];
+}
+
 
 createListeners();
