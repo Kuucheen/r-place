@@ -2,14 +2,16 @@ import {io} from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
 
 const socket = io();
 
-let radius = 20;
+let radius = 30;
 let currentColor = "rgb(217, 217, 217)";
 let offsetX = 0;
 let offsetY = 0;
 let imageCache = [];
-let width = 1000, height = 1000;
+let width = 50, height = 50;
 
 const canvas = document.getElementById("canvas");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 const ctx = canvas.getContext("2d");
 
 function selectColor(event) {
@@ -51,8 +53,8 @@ function createListeners() {
         e.preventDefault();
         if (!move)
             socket.emit("mouseDown",
-                Math.floor(e.clientX / radius) - offsetX,
-                Math.floor(e.clientY / radius) - offsetY,
+                Math.floor((e.clientX - canvas.getBoundingClientRect().left - offsetX) / radius),
+                Math.floor((e.clientY - canvas.getBoundingClientRect().top - offsetY) / radius),
                 hexToRgb(currentColor)
             )
 
@@ -74,12 +76,12 @@ function createListeners() {
 function redrawAll() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    //drawGrid(radius);
-    for (let i = 0; i < window.innerWidth / radius; i++) {
-        for (let j = 0; j < window.innerHeight / radius; j++) {
-            drawRect(i * radius, j * radius, getPixel(i + offsetX / radius, j + offsetY / radius))
+    for (let i = 0; i < width; i++) {
+        for (let j = 0; j < height; j++) {
+            drawRect(i, j, getPixel(i, j))
         }
     }
+    drawGrid(radius);
 }
 
 function getPixel(x, y) {
@@ -100,7 +102,7 @@ function drawGrid(level) {
 
 function drawRect(x, y, color) {
     ctx.beginPath();
-    ctx.rect(x, y, radius, radius);
+    ctx.rect(x * radius + offsetX, y * radius + offsetY, radius, radius);
     ctx.fillStyle = color;
     ctx.fill();
     ctx.closePath();
@@ -110,13 +112,8 @@ function clamp(value, min, max) {
     return Math.min(Math.max(value, min), max);
 }
 
-function hexToRgb(hex) {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? [
-        parseInt(result[1], 16),
-        parseInt(result[2], 16),
-        parseInt(result[3], 16)
-    ] : [0, 0, 0];
+function hexToRgb(rgb) {
+    return rgb.replace(/[^\d,]/g, '').split(',').map(x => parseInt(x));
 }
 
 

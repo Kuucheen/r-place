@@ -8,6 +8,7 @@ body {
 img {
     padding-top: 7px;
     padding-left: 7px;
+    user-select: none;
 }
 
 .pixelcount {
@@ -49,6 +50,7 @@ img {
     position: relative;
     margin-right: 10px;
     cursor: pointer;
+    user-select: none;
 }
 
 .round {

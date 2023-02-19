@@ -4,8 +4,8 @@ import {Socket} from "socket.io/dist/socket";
 import {Image} from "../image/Image";
 
 export class PlaceSocket extends Websocket<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData> {
-    static readonly width: number = 1000;
-    static readonly height: number = 1000;
+    static readonly width: number = 50;
+    static readonly height: number = 50;
     private readonly image: Image;
 
     constructor(port: number) {
@@ -26,7 +26,7 @@ export class PlaceSocket extends Websocket<ClientToServerEvents, ServerToClientE
     private createConnection(client: Socket<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>) {
         this.image.getFullImage().then(img => client.emit("updateAll", img));
         client.on("mouseDown", (x, y, color) => {
-            this.image.setPixel(x, y, color); //ToDo Validate incoming values
+            this.image.setPixel(x, y, color); //Todo Validate incoming values
             this.socket.emit("update", x, y, color);
         });
     }
