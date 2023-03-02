@@ -2,6 +2,11 @@ import {Websocket} from "./Websocket";
 import {ClientToServerEvents, InterServerEvents, ServerToClientEvents, SocketData} from "../../helpers/SocketEvents";
 import {Socket} from "socket.io/dist/socket";
 import {Image} from "../image/Image";
+import {log} from "../../helpers/Logcat";
+
+function getIP(req): string {
+    return req.header('x-forwarded-for') || req.socket.remoteAddress;
+}
 
 export class PlaceSocket extends Websocket<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData> {
     static readonly width: number = 50;
@@ -18,6 +23,11 @@ export class PlaceSocket extends Websocket<ClientToServerEvents, ServerToClientE
         this.app.get('/', (req, res) => {
             res.render('index', {
                 title: "HTL r/Place"
+            });
+
+            log().info("socket", "Client connected to the server. Sending index page", {
+                ip: getIP(req),
+                fingerprint: req.fingerprint.hash
             });
         });
         this.socket.on("connection", client => this.createConnection(client));

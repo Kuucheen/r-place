@@ -1,10 +1,10 @@
 import {engine} from "express-handlebars";
-import {join} from "path";
 import {json, urlencoded} from "body-parser";
 import {Server} from "socket.io";
 import {DefaultEventsMap, EventsMap} from "socket.io/dist/typed-events";
 
 const express = require('express')
+const Fingerprint = require('express-fingerprint');
 
 export class Websocket<
     ListenEvents extends EventsMap = DefaultEventsMap,
@@ -37,8 +37,16 @@ export class Websocket<
 
         this.app.set('views', "res/views");
         this.app.set('view engine', "hbs");
+        this.app.set('trust proxy', true);
         this.app.use(express.static('res/public'));
         this.app.use(urlencoded({extended: false}));
+        this.app.use(Fingerprint({
+            parameters: [
+                Fingerprint.useragent,
+                Fingerprint.acceptHeaders,
+                Fingerprint.geoip
+            ]
+        }))
         this.app.use(json());
     }
 }
