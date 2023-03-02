@@ -81,7 +81,7 @@ function redrawAll() {
             drawRect(i, j, getPixel(i, j))
         }
     }
-    drawGrid(radius);
+    //drawGrid(radius);
 }
 
 function getPixel(x, y) {
