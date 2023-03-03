@@ -8,18 +8,52 @@ let offsetX = 0;
 let offsetY = 0;
 let imageCache = [];
 let width = 50, height = 50;
+let timeout = Date.now() / 1000;
 
 const canvas = document.getElementById("canvas");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 const ctx = canvas.getContext("2d");
 
-function selectColor(event) {
-    currentColor = event.target.style.backgroundColor;
-    console.log(currentColor);
+function post(path, params, method = 'post') {
+    const form = document.createElement('form');
+    form.method = method;
+    form.action = path;
+
+    for (const key in params) {
+        if (params.hasOwnProperty(key)) {
+            const hiddenField = document.createElement('input');
+            hiddenField.type = 'hidden';
+            hiddenField.name = key;
+            hiddenField.value = params[key];
+
+            form.appendChild(hiddenField);
+        }
+    }
+
+    document.body.appendChild(form);
+    form.submit();
 }
 
+function selectColor(event) {
+    currentColor = event.target.style.backgroundColor;
+}
 
+setInterval(() => {
+    const leftTimeout = Math.max(0, timeout - Date.now() / 1000);
+    const seconds = Math.floor(leftTimeout % 60);
+    document.getElementById("pc-number").innerText =
+        `${Math.floor(leftTimeout / 60)}:${seconds < 10 ? "0" : ""}${seconds}`;
+}, 1000);
+
+socket.on("error", error => {
+    if (error === "invalidHash") window.location.reload();
+    else post("/error", {error});
+});
+
+socket.on("timeoutUpdated", t => {
+    timeout = t;
+});
 socket.on("update", (x, y, colorArr) => {
     const i = (x * width + y) * 4;
     imageCache[i] = colorArr[0];
@@ -28,7 +62,6 @@ socket.on("update", (x, y, colorArr) => {
     redrawAll();
 });
 socket.on("updateAll", buffer => {
-    console.log(buffer);
     imageCache = new Uint8Array(buffer);
     redrawAll();
 });

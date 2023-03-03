@@ -7,3 +7,4 @@
 - [ ] Fix placement offset
 - [ ] Fix grid lines
 - [ ] Batched image backups
+- [ ] MySQL Database

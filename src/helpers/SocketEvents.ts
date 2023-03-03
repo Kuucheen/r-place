@@ -1,9 +1,12 @@
 interface ServerToClientEvents {
     updateAll: (paths: Array<number>) => void;
+    error: (error: string) => void;
+    timeoutUpdated: (timestamp) => void;
 }
 
 interface ClientToServerEvents {
     mouseDown: (x: number, y: number, color: Array<number>) => void;
+    requestTimeout: () => void;
 }
 
 interface InterServerEvents {
@@ -11,6 +14,9 @@ interface InterServerEvents {
 }
 
 interface SocketData {
+    ip: string,
+    hash: string,
+
 }
 
 

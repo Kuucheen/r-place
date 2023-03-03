@@ -1,0 +1,11 @@
+{
+  "Tobero": {
+    "known-hashes": [],
+    "known-ips": [],
+    "user-id": "uuid",
+    "created-at": 11111111,
+    "last-seen": 2222222,
+    "modified-pixels": 3545,
+    "timeout": 235453
+  }
+}

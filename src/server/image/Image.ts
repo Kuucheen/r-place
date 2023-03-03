@@ -1,19 +1,24 @@
 import {Canvas, createCanvas} from 'canvas';
 import {Context} from "vm";
-import * as fs from "fs";
 import {log} from '../../helpers/Logcat';
+import * as tar from "tar";
+import * as fs from "fs";
+import {User} from "../user/User";
+import {Server} from "socket.io";
 
-import dateFormat from "dateformat";
+const DateFormatter = require('date-and-time');
 
 export class Image {
     private readonly _width: number;
     private readonly _height: number;
     private readonly canvas: Canvas;
     private readonly context: Context;
+    private readonly socket: Server;
 
-    constructor(width: number, height: number) {
+    constructor(server: Server, width: number, height: number) {
         this._width = width;
         this._height = height;
+        this.socket = server;
 
         this.canvas = createCanvas(width, height);
         this.context = this.canvas.getContext("2d");
@@ -21,12 +26,21 @@ export class Image {
         this.context.fillStyle = "rgb(217, 217, 217)";
         this.context.fillRect(0, 0, this.width, this.height);
 
-        setInterval(async () => this.saveBackupImage(), 1000 * 60);
+        setInterval(() => this.compressOldBackups(), 1000 * 60 * 60 * 12);
+        setInterval(() => this.saveBackupImage(), 1000 * 60 * 30);
     }
 
-    setPixel(x: number, y: number, color: Array<number>): void {
+    async setPixel(user: User,
+                   x: number,
+                   y: number,
+                   color: Array<number>): Promise<void> {
+        await user.setTimeout();
+        user.username().then(username => log().info("session", `Pixel placed`, {user: username, x, y, color}));
+
         this.context.fillStyle = 'rgb(' + color[0] + ',' + color[1] + ',' + color[2] + ')';
         this.context.fillRect(x, y, 1, 1);
+        this.socket.emit("update", x, y, color);
+        await user.modifyPixel();
     }
 
     getPixel(x: number, y: number): Array<number> {
@@ -39,12 +53,15 @@ export class Image {
     }
 
     private async saveBackupImage() {
-        const folder = `./cache/${dateFormat(new Date(), "yyyy-mm-dd h:MM:ss")}`;
-        if (!fs.existsSync(folder))
+        const date = Date.now();
+        const folder = `./cache/canvas/${DateFormatter.format(new Date(date), "YYYY-MM-DD")}`;
+        if (!fs.existsSync(folder)) {
+            log().debug("image", "Created folder " + folder);
             fs.mkdirSync(folder);
+        }
 
-        const path = `${folder}/${Date.now()}.png`;
-        log().info("image", "Saving image to " + path);
+        const path = `${folder}/${date}.jpg`;
+        log().debug("image", "Saving image to " + path);
 
         const data = this.canvas.toDataURL().replace(/^data:image\/\w+;base64,/, "");
         const buf = Buffer.from(data, "base64");
@@ -54,6 +71,31 @@ export class Image {
                 return;
             log().error("image", `Image ${path} couldn't get saved`, err);
         });
+    }
+
+    private async compressOldBackups() {
+        log().debug("image", "Searching for compressible folders");
+        const newestFolder = DateFormatter.format(new Date(), "YYYY-MM-DD");
+        fs.readdirSync(`./cache/canvas`).forEach(folder => {
+            if (folder != newestFolder)
+                this.compressFolder(folder);
+        });
+    }
+
+    private async compressFolder(folder) {
+        log().info("image", "Compressing", folder);
+        tar.create(
+            {
+                gzip: {
+                    level: 9
+                },
+                cwd: "./cache/canvas",
+            },
+            [folder]
+        ).pipe(fs.createWriteStream(`./cache/canvas/${folder}.tar.gz`).once("finish", () => {
+            log().info("image", "Deleting folder", folder);
+            fs.rmSync(`./cache/canvas/${folder}`, {recursive: true});
+        }));
     }
 
     get width(): number {
