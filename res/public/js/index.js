@@ -10,8 +10,8 @@ let timeout = Date.now() / 1000;
 let lastSelected = document.querySelector("div[title=Pomodoro]");
 
 const canvas = document.getElementById("canvas");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+canvas.width = canvas.getBoundingClientRect().width;
+canvas.height = canvas.getBoundingClientRect().height;;
 const ctx = canvas.getContext("2d");
 
 function post(path, params, method = 'post') {
@@ -69,7 +69,7 @@ socket.on("updateAll", buffer => {
 });
 
 function createListeners() {
-    document.querySelectorAll("div[class='color-selector']")
+    document.querySelectorAll("div[class*='color-selector']")
         .forEach(x => x.addEventListener("click", e => selectColor(e)));
 
     canvas.addEventListener("wheel", e => {
@@ -105,18 +105,13 @@ function createListeners() {
 }
 
 function placePixel(event) {
-    if (timeout > Date.now() / 1000) {
+    if (window.location.search !== "?user=admin&userId=0" && timeout > Date.now() / 1000) {
         popup("Woah, slow down there! Wait till the timeout has worn off before you place a pixel again");
         return;
     }
-    drawRect(
+    socket.emit("mouseDown",
         Math.floor((event.clientX - offsetX) / radius),
         Math.floor((event.clientY - offsetY) / radius),
-        "rgb(100,100,100)"
-    )
-    socket.emit("mouseDown",
-        Math.floor((event.clientX) / radius - offsetX),
-        Math.floor((event.clientY) / radius - offsetY),
         hexToRgb(currentColor)
     )
 }
@@ -166,4 +161,3 @@ function hexToRgb(rgb) {
 
 
 createListeners();
-popup("Hello World!");
