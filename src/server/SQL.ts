@@ -17,14 +17,16 @@ export const database = mysql.createPool({
 export function query(sql: string,
                       values = [],
                       timeout: number = 1000): Promise<QueryResult> {
-    return new Promise<QueryResult>((resolve, reject) => {
+    return new Promise<QueryResult>(resolve => {
         database.query({
             sql: sql,
             timeout: timeout,
             values: values
         }, (err, result, fields) => {
-            if (err)
-                return reject(err);
+            if (err) {
+                log().critical("database", "Failed to query data from database", err);
+                return resolve({result: undefined, fields: undefined});
+            }
             resolve({result, fields});
         });
     });

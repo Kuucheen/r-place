@@ -1,0 +1,74 @@
+#popup-container {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+}
+.popup {
+    position: relative;
+    width: 20vw;
+    background: #252525;
+    border-radius: 30px;
+    right: -25vw;
+    bottom: 0;
+    z-index: 1;
+    margin-bottom: 40px;
+    margin-right: 20px;
+    padding: 20px 20px 20px 40px;
+    text-align: center;
+    animation-name: popup;
+    animation-duration: 6s;
+    animation-timing-function: ease;
+}
+
+.popup::before {
+    position: absolute;
+    content: " ";
+    top: 0;
+    left: 0;
+    background-color: #F35353;
+    border-bottom-left-radius: 30px;
+    border-top-left-radius: 30px;
+    width: 7%;
+    height: 100%;
+}
+
+.popup::after {
+    position: absolute;
+    content: " ";
+    top: -3px;
+    left: 7%;
+    width: 0;
+    height: 100%;
+    border-bottom: #3d4dc7 solid 3px;
+    z-index: 0;
+    animation-name: popup-timer;
+    animation-duration: 5s;
+    animation-timing-function: linear;
+}
+
+@keyframes popup {
+    from {
+        right: -25vw;
+    }
+
+    8.3% {
+        right: 0;
+    }
+
+    83% {
+        right: 0;
+    }
+
+    to {
+        right: -25vw;
+    }
+}
+
+@keyframes popup-timer {
+    from {
+        width: 88%;
+    }
+    to {
+        width: 0;
+    }
+}

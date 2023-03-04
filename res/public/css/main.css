@@ -12,7 +12,7 @@ img {
 }
 
 #github {
-    margin: 15px 0% 15px 1%;
+    margin: 15px 0 15px 1%;
     width: 55px;
     height: 55px;
     float: left;
@@ -42,6 +42,27 @@ img {
     animation-duration: 1s;
 }
 
+#colorpicker {
+    border-radius: 20%;
+}
+
+#copyright {
+    font-size: small;
+    color: #727272;
+    position: absolute;
+    margin: 5px;
+    bottom: 0;
+    right: 0;
+}
+
+#canvas {
+    grid-area: canvas;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
 .pc-number {
     font-size: xxx-large;
     text-align: center;
@@ -69,16 +90,10 @@ img {
     user-select: none;
 }
 
-#colorpicker {
-    border-radius: 20%;
-    margin-left: -10px;
-    margin-left: 4%;
-}
 
-#selected {
-    box-shadow: 0px 0px 15px #aaaaaa, 0 0 0 2px #b3b3b3;
+.active {
+    box-shadow: 0 0 15px #697cff, 0 0 0 3px #3d4dc7;
 }
-
 
 .round {
     margin-left: 200px;
@@ -101,37 +116,6 @@ img {
     width: 100%;
 }
 
-.popup {
-    height: 100px;
-    width: 300px;
-    background: #252525;
-    border-radius: 30px;
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    z-index: 1;
-    margin-bottom: 40px;
-    margin-right: 20px;
-    padding-top: 10px;
-    padding-left: 10px;
-
-}
-
-#popup-text {
-    margin-top: -85px;
-    margin-left: 50px;
-}
-
-.highlight {
-    background-color: #F35353;
-    border-bottom-left-radius: 27px;
-    border-top-left-radius: 27px;
-    height: 110px;
-    width: 50px;
-    margin-left: -10px;
-    margin-top: -10px;
-}
-
 .container {
     display: grid;
     width: 100vw;
@@ -142,21 +126,4 @@ img {
     grid-template-areas:
     "canvas"
     "navigation";
-}
-
-#copyright {
-    font-size: small;
-    color: #727272;
-    position: absolute;
-    margin: 5px;
-    bottom: 0;
-    right: 0;
-}
-
-#canvas {
-    grid-area: canvas;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
 }

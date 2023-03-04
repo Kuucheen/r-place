@@ -1,5 +1,3 @@
-import {io} from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
-
 const socket = io();
 
 let radius = 30;
@@ -8,27 +6,64 @@ let offsetX = 0;
 let offsetY = 0;
 let imageCache = [];
 let width = 50, height = 50;
+let timeout = Date.now() / 1000;
+let lastSelected = document.querySelector("div[title=Pomodoro]");
 
 const canvas = document.getElementById("canvas");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 const ctx = canvas.getContext("2d");
 
-function selectColor(event) {
-    currentColor = event.target.style.backgroundColor;
-    console.log(currentColor);
+function post(path, params, method = 'post') {
+    const form = document.createElement('form');
+    form.method = method;
+    form.action = path;
+
+    for (const key in params) {
+        if (params.hasOwnProperty(key)) {
+            const hiddenField = document.createElement('input');
+            hiddenField.type = 'hidden';
+            hiddenField.name = key;
+            hiddenField.value = params[key];
+
+            form.appendChild(hiddenField);
+        }
+    }
+
+    document.body.appendChild(form);
+    form.submit();
 }
 
+function selectColor(event) {
+    currentColor = event.target.style.backgroundColor;
+    event.target.classList.add("active");
+    lastSelected.classList.remove("active");
+    lastSelected = event.target;
+}
 
+setInterval(() => {
+    const leftTimeout = Math.max(0, timeout - Date.now() / 1000);
+    const seconds = Math.floor(leftTimeout % 60);
+    document.querySelector("div[class=pc-number]").innerText =
+        `${Math.floor(leftTimeout / 60)}:${seconds < 10 ? "0" : ""}${seconds}`;
+}, 1000);
+
+socket.on("error", error => {
+    if (error === "invalidHash") window.location.reload();
+    else post("/error", {error});
+});
+
+socket.on("timeoutUpdated", t => {
+    timeout = t;
+});
 socket.on("update", (x, y, colorArr) => {
-    const i = (x * width + y) * 4;
+    const i = (y * height + x) * 4;
     imageCache[i] = colorArr[0];
     imageCache[i + 1] = colorArr[1];
     imageCache[i + 2] = colorArr[2];
     redrawAll();
 });
 socket.on("updateAll", buffer => {
-    console.log(buffer);
     imageCache = new Uint8Array(buffer);
     redrawAll();
 });
@@ -51,13 +86,9 @@ function createListeners() {
     });
     canvas.addEventListener("mouseup", e => {
         e.preventDefault();
-        if (!move)
-            socket.emit("mouseDown",
-                Math.floor((e.clientX - canvas.getBoundingClientRect().left - offsetX) / radius),
-                Math.floor((e.clientY - canvas.getBoundingClientRect().top - offsetY) / radius),
-                hexToRgb(currentColor)
-            )
-
+        if (!move) {
+            placePixel(e);
+        }
         if (e.button !== 1)
             return;
         move = false;
@@ -73,6 +104,23 @@ function createListeners() {
     });
 }
 
+function placePixel(event) {
+    if (timeout > Date.now() / 1000) {
+        popup("Woah, slow down there! Wait till the timeout has worn off before you place a pixel again");
+        return;
+    }
+    drawRect(
+        Math.floor((event.clientX - offsetX) / radius),
+        Math.floor((event.clientY - offsetY) / radius),
+        "rgb(100,100,100)"
+    )
+    socket.emit("mouseDown",
+        Math.floor((event.clientX) / radius - offsetX),
+        Math.floor((event.clientY) / radius - offsetY),
+        hexToRgb(currentColor)
+    )
+}
+
 function redrawAll() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -85,7 +133,7 @@ function redrawAll() {
 }
 
 function getPixel(x, y) {
-    const i = (x * width + y) * 4;
+    const i = (y * height + x) * 4;
     return `rgb(${imageCache[i]}, ${imageCache[i + 1]}, ${imageCache[i + 2]}`;
 }
 
@@ -118,3 +166,4 @@ function hexToRgb(rgb) {
 
 
 createListeners();
+popup("Hello World!");
