@@ -1,10 +1,26 @@
 <div class="container">
     <canvas id="canvas"></canvas>
+    <div class="popup">
+
+        <div class="highlight"></div>
+        <div id="popup-text">Woah, slow down there! Wait a moment before you place your next pixel</div>
+
+    </div>
     <div class="navbar">
-        <div class="pixelcount">
-            <div id="pc-number" class="pc-number"></div>
+
+        <div id="github">
+
+            <a href="https://github.com/Kuucheen/r-place" target="_blank">
+                <img src="res/github.png"width="41px" height="41px" alt="Github Button">
+            </a>
+
         </div>
-        <div>
+
+        <div id="pixelcount">
+            <img src="res/infinity.png" width="41px" height="41px" alt="Pixel Left" style="margin-left: 25px ">
+            <div class="pc-number"></div>
+        </div>
+        <div id="colors">
             <div class="color-selector" style="background-color: rgb(217, 217, 217);" title="Pomodoro"></div>
             <div class="color-selector" style="background-color: rgb(243, 83, 83);" title="Pomodoro"></div>
             <div class="color-selector" style="background-color: rgb(255, 155, 60);" title="Tangerine"></div>
@@ -14,7 +30,11 @@
             <div class="color-selector" style="background-color: rgb(106, 70, 250);" title="Blueberry"></div>
             <div class="color-selector" style="background-color: rgb(176, 93, 217);" title="Lavender"></div>
             <div class="color-selector" style="background-color: rgb(68, 68, 68);" title="Onyx"></div>
+
+            <div class="color-selector" id="colorpicker" style="background-color: #3d4dc7;" title="Selector"></div>
         </div>
+
+
         <div id="copyright">
             © 2023 Daniel Schneeweis, Tobias Madlberger
         </div>
