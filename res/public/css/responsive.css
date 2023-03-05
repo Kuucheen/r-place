@@ -1,0 +1,55 @@
+@media only screen and (max-width: 700px) {
+    #github {
+        visibility: hidden;
+        display: none;
+    }
+
+    #copyright {
+        font-size: xx-small;
+    }
+
+    #pix-color-container {
+        justify-content: space-around;
+        align-content: space-around;
+        gap: 0;
+    }
+
+    .popup {
+        position: fixed;
+        bottom: 8vh;
+        width: 80%;
+    }
+
+    div[class*="color-selector"]:not(div[title="Pomodoro"]):not(#colorpicker) {
+        visibility: hidden;
+        display: none;
+    }
+
+    .container {
+        grid-template-rows: 7fr 1fr;
+    }
+    @keyframes popup {
+        from {
+            right: -100vw;
+        }
+
+        8.3% {
+            right: 0;
+        }
+
+        83% {
+            right: 0;
+        }
+
+        to {
+            right: -150vw;
+        }
+    }
+}
+
+@media only screen and (max-width: 900px) {
+    #clr-parent {
+        margin-left: -250px;
+        margin-top: -60px;
+    }
+}

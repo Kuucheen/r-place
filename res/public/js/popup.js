@@ -3,5 +3,5 @@ function popup(text) {
     div.innerText = text;
     div.classList.add("popup");
     document.getElementById("popup-container").append(div);
-    setTimeout(() => document.body.removeChild(div), 6000);
+    setTimeout(() => document.getElementById("popup-container").removeChild(div), 6000);
 }

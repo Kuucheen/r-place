@@ -1,5 +1,5 @@
 #popup-container {
-    position: absolute;
+    position: fixed;
     right: 0;
     bottom: 0;
 }
@@ -7,13 +7,13 @@
     position: relative;
     width: 20vw;
     background: #252525;
-    border-radius: 30px;
-    right: -25vw;
+    border-top-right-radius: 30px;
+    border-bottom-right-radius: 30px;
     bottom: 0;
+    right: 0;
     z-index: 1;
     margin-bottom: 40px;
-    margin-right: 20px;
-    padding: 20px 20px 20px 40px;
+    padding: 20px;
     text-align: center;
     animation-name: popup;
     animation-duration: 6s;
@@ -24,7 +24,7 @@
     position: absolute;
     content: " ";
     top: 0;
-    left: 0;
+    left: -7%;
     background-color: #F35353;
     border-bottom-left-radius: 30px;
     border-top-left-radius: 30px;
@@ -36,7 +36,7 @@
     position: absolute;
     content: " ";
     top: -3px;
-    left: 7%;
+    left: 0;
     width: 0;
     height: 100%;
     border-bottom: #3d4dc7 solid 3px;
