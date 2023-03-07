@@ -1,3 +1,5 @@
+import {io} from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
+
 const socket = io();
 
 let minZoom = 20;
@@ -17,33 +19,11 @@ canvas.width = canvas.getBoundingClientRect().width;
 canvas.height = canvas.getBoundingClientRect().height;
 const ctx = canvas.getContext("2d");
 
-window.addEventListener('resize', event => {
+window.addEventListener('resize', () => {
     canvas.width = canvas.getBoundingClientRect().width;
     canvas.height = canvas.getBoundingClientRect().height;
-    setTimeout(() => {
-        redrawAll();
-    }, 1);
+    setTimeout(() => redrawAll(), 1);
 }, true);
-
-function post(path, params, method = 'post') {
-    const form = document.createElement('form');
-    form.method = method;
-    form.action = path;
-
-    for (const key in params) {
-        if (params.hasOwnProperty(key)) {
-            const hiddenField = document.createElement('input');
-            hiddenField.type = 'hidden';
-            hiddenField.name = key;
-            hiddenField.value = params[key];
-
-            form.appendChild(hiddenField);
-        }
-    }
-
-    document.body.appendChild(form);
-    form.submit();
-}
 
 function selectColor(event) {
     currentColor = event.target.style.backgroundColor;
@@ -61,13 +41,11 @@ setInterval(() => {
 }, 1000);
 
 socket.on("error", error => {
-    if (error === "invalidHash") window.location.reload();
-    else post("/error", {error});
+    if (error === "invalidHash") return window.location.reload();
+    post("/error", {error});
 });
 
-socket.on("timeoutUpdated", t => {
-    timeout = t;
-});
+socket.on("timeoutUpdated", t => timeout = t);
 socket.on("update", (x, y, colorArr) => {
     const i = (y * height + x) * 4;
     imageCache[i] = colorArr[0];
@@ -75,13 +53,14 @@ socket.on("update", (x, y, colorArr) => {
     imageCache[i + 2] = colorArr[2];
     redrawAll();
 });
-socket.on("updateAll", buffer => {
+socket.on("updateAll", (w, h, buffer) => {
+    width = w;
+    height = h;
     imageCache = new Uint8Array(buffer);
     redrawAll();
 });
 
 function createListeners() {
-    let longPressed = false;
     let scaling = false;
     let prevDiff = 0;
     document.querySelectorAll("div[class*='color-selector']:not(#colorpicker)")
@@ -89,22 +68,21 @@ function createListeners() {
 
     document.getElementById("colorpicker").addEventListener("click", e => {
         const parent = document.getElementById("clr-parent");
-        if (parent.children.length !== 0) {
-            document.getElementById("clr-parent").innerHTML = "";
-        } else {
-            Coloris({
-                parent: "#clr-parent",
-                themeMode: 'dark',
-                theme: "large",
-                alpha: false,
-                inline: true
-            });
-            document.getElementById("colorpicker").classList.add("active");
-            lastSelected.classList.remove("active");
-            lastSelected = document.getElementById("colorpicker");
-            parent.style.left = `${e.clientX}px`;
-            parent.style.top = `${e.clientY - parent.getBoundingClientRect().height}px`;
-        }
+        if (parent.children.length !== 0)
+            return document.getElementById("clr-parent").innerHTML = "";
+
+        Coloris({
+            parent: "#clr-parent",
+            themeMode: 'dark',
+            theme: "large",
+            alpha: false,
+            inline: true
+        });
+        document.getElementById("colorpicker").classList.add("active");
+        lastSelected.classList.remove("active");
+        lastSelected = document.getElementById("colorpicker");
+        parent.style.left = `${e.clientX}px`;
+        parent.style.top = `${e.clientY - parent.getBoundingClientRect().height}px`;
     });
 
     document.addEventListener("coloris:pick", e => {
@@ -115,15 +93,13 @@ function createListeners() {
 
     canvas.addEventListener("wheel", e => {
         e.preventDefault();
-        const zoom_x = canvas.getBoundingClientRect().width / (width * zoom);
-        zoom = clamp(zoom - e.deltaY / 100, minZoom, maxZoom);
+        zoom = clamp(Math.floor((zoom - e.deltaY / 100) * 10) / 10, minZoom, maxZoom);
         redrawAll();
     });
     let move = false;
     canvas.addEventListener("mousedown", e => {
         e.preventDefault();
-        if (e.button !== 1)
-            return;
+        if (e.button !== 1) return;
         move = true;
     });
     canvas.addEventListener("mouseup", e => {
@@ -131,19 +107,12 @@ function createListeners() {
         if (!move) {
             placePixel(e);
         }
-        longPressed = false;
-        if (e.button !== 1)
-            return;
+        if (e.button !== 1) return;
         move = false;
     });
 
-    canvas.addEventListener("long-press", e => {
-        longPressed = true;
-    });
-
     canvas.addEventListener("mousemove", e => {
-        if (!move && !longPressed)
-            return;
+        if (!move) return;
 
         offsetX += e.movementX;
         offsetY += e.movementY;
@@ -153,8 +122,7 @@ function createListeners() {
     let lastX, lastY;
     canvas.addEventListener("touchmove", e => {
         e.preventDefault();
-        if (e.touches.length !== 1)
-            return
+        if (e.touches.length !== 1) return;
         if (lastX && lastY) {
             offsetX = lerp(offsetX, offsetX + e.touches[0].clientX - lastX, .5);
             offsetY = lerp(offsetY, offsetY + e.touches[0].clientY - lastY, .5);
@@ -196,26 +164,34 @@ function createListeners() {
 }
 
 function placePixel(event) {
-        if (window.location.search !== "?user=admin&userId=0" && timeout > Date.now() / 1000) {
-            popup("Woah, slow down there! Wait till the timeout has worn off before you place a pixel again");
-            return;
-        }
+    if (window.location.search !== "?user=admin&userId=0" && timeout > Date.now() / 1000)
+        return popup("Woah, slow down there! Wait till the timeout has worn off before you place a pixel again");
+
+    const pixX = Math.floor((event.clientX - offsetX) / zoom), pixY = Math.floor((event.clientY - offsetY) / zoom);
+    if (pixX < 0 || pixX >= width || pixY < 0 || pixY > height)
+        return popup("You can't place pixels there!");
+
     socket.emit("mouseDown",
-        Math.floor((event.clientX - offsetX) / zoom),
-        Math.floor((event.clientY - offsetY) / zoom),
+        pixX,
+        pixY,
         hexToRgb(currentColor)
-    )
+    );
 }
 
 function redrawAll() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    for (let i = 0; i < width; i++) {
-        for (let j = 0; j < height; j++) {
+    const negativeOffsetX = -offsetX;
+    const negativeOffsetY = -offsetY;
+    const maxViewWidth = window.innerWidth / zoom;
+    const maxViewHeight = window.innerHeight / zoom;
+    for (let i = clamp(Math.ceil(negativeOffsetX / zoom) - 1, 0, width);
+         i < clamp(Math.ceil(negativeOffsetX / zoom + maxViewWidth), 0, width); i++)
+        for (let j = clamp(Math.ceil(negativeOffsetY / zoom) - 1, 0, height);
+             j < clamp(Math.ceil(negativeOffsetY / zoom + maxViewHeight), 0, height); j++)
             drawRect(i, j, getPixel(i, j))
-        }
-    }
-    //drawGrid(radius);
+
+    drawGrid();
 }
 
 function getPixel(x, y) {
@@ -223,44 +199,22 @@ function getPixel(x, y) {
     return `rgb(${imageCache[i]}, ${imageCache[i + 1]}, ${imageCache[i + 2]}`;
 }
 
-function drawGrid(level) {
-    let width = canvas.width;
-    let height = canvas.height;
-    ctx.strokeStyle = "rgb(100, 100, 100)";
-    for (let i = 0; i < width; i += level)
-        ctx.strokeRect(i + offsetX % level, 0, 0, height);
+function drawGrid() {
+    if (zoom < minZoom)
+        return;
 
-    for (let i = 0; i < height; i += level)
-        ctx.strokeRect(0, i + offsetY % level, width, 0);
+    let cWidth = canvas.width;
+    let cHeight = canvas.height;
+    ctx.strokeStyle = `rgba(100, 100, 100, ${remap(zoom, minZoom, maxZoom, .3, 1)})`;
+    for (let i = 0; i < cWidth; i += zoom)
+        ctx.strokeRect(clamp(i + offsetX % zoom, offsetX, offsetX + width * zoom), offsetY, 0, height * zoom);
+    for (let i = 0; i < cHeight; i += zoom)
+        ctx.strokeRect(offsetX, clamp(i + offsetY % zoom, offsetY, offsetY + height * zoom), width * zoom, 0);
 }
 
 function drawRect(x, y, color) {
-    ctx.beginPath();
-    ctx.rect(x * zoom + offsetX, y * zoom + offsetY, zoom, zoom);
     ctx.fillStyle = color;
-    ctx.fill();
-    ctx.closePath();
-}
-
-function clamp(value, min, max) {
-    return Math.min(Math.max(value, min), max);
-}
-
-function hexToRgb(rgb) {
-    return rgb.replace(/[^\d,]/g, '').split(',').map(x => parseInt(x));
-}
-
-function hexToStr(hex) {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16)
-    } : null;
-}
-
-function lerp(a, b, time) {
-    return a * (1 - time) + b * time;
+    ctx.fillRect(x * zoom + offsetX, y * zoom + offsetY, zoom, zoom);
 }
 
 createListeners();

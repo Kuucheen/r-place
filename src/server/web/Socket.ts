@@ -30,7 +30,7 @@ export class PlaceSocket extends Websocket<ClientToServerEvents, ServerToClientE
         setTimeout(() => log().info("Started socket"), 1000);
         this.image = new Image(this.socket, PlaceSocket.width, PlaceSocket.height);
         this.ipHashes = new ShortCacheMap<string, string>(30 * 1000);
-        this.register().then(_ => console.log("Registered"));
+        this.register().then(() => console.log("Registered"));
     }
 
     private async register(): Promise<void> {
@@ -42,9 +42,8 @@ export class PlaceSocket extends Websocket<ClientToServerEvents, ServerToClientE
             if (req.query.user === "admin" && req.query.userId == 0 && (ip === "::1" || ip === "::ffff:127.0.0.1")) {
                 log().critical("users", "User connected as admin", {ip, hash});
                 this.ipHashes.set(ip, "admin");
-            } else {
-                this.ipHashes.set(ip, hash);
-            }
+            } else this.ipHashes.set(ip, hash);
+
 
             log().info("socket", "Client connected", {
                 ip: ip,
@@ -80,12 +79,12 @@ export class PlaceSocket extends Websocket<ClientToServerEvents, ServerToClientE
         }
         log().debug("socket", "Client established socket.io connection", {ip, userId: user.userID, hash});
 
-        this.image.getFullImage().then(img => client.emit("updateAll", img));
+        this.image.getFullImage().then(img => client.emit("updateAll", PlaceSocket.width, PlaceSocket.height, img));
         user.timeout().then(timeout => client.emit("timeoutUpdated", timeout));
 
         client.on("mouseDown", async (x, y, color) => {
-            if (!(await user.canPlacePixels())) {
-                log().error("edit-session", "User sent pixel modification request while in timeout", {
+            if (x < 0 || x >= PlaceSocket.width || y < 0 || y > PlaceSocket.height) return log().error("edit-session",
+                "User tried to place pixel outside of canvas", {
                     userId: user.userID,
                     ip,
                     hash,
@@ -93,8 +92,15 @@ export class PlaceSocket extends Websocket<ClientToServerEvents, ServerToClientE
                     y,
                     color
                 });
-                return;
-            }
+            if (!(await user.canPlacePixels())) return log().error("edit-session",
+                "User sent pixel modification request while in timeout", {
+                    userId: user.userID,
+                    ip,
+                    hash,
+                    x,
+                    y,
+                    color
+                });
 
 
             await this.image.setPixel(user, x, y, color); //Todo Validate incoming values

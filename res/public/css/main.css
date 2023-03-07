@@ -85,6 +85,7 @@ img {
 
 #colors {
     display: inline-block;
+    user-select: none;
 }
 
 .pc-number {

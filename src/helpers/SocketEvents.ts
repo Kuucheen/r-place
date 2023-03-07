@@ -1,5 +1,5 @@
 interface ServerToClientEvents {
-    updateAll: (paths: Array<number>) => void;
+    updateAll: (width, height, paths: Array<number>) => void;
     error: (error: string) => void;
     timeoutUpdated: (timestamp) => void;
 }

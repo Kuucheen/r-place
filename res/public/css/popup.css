@@ -10,7 +10,7 @@
     border-top-right-radius: 30px;
     border-bottom-right-radius: 30px;
     bottom: 0;
-    right: 0;
+    right: -100vw;
     z-index: 1;
     margin-bottom: 40px;
     padding: 20px;
