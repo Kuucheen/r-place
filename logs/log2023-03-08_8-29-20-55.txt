@@ -1,0 +1,87 @@
+{"level":"info","date":"2023-03-08T07:29:20.139Z","pid":10980,"hostname":"Tobias-Laptop","message":"Loaded lastest canvas from file"}
+{"level":"info","date":"2023-03-08T07:29:20.428Z","pid":10980,"hostname":"Tobias-Laptop","origin":"socket","message":"Client connected","metadata":{"ip":"::1","fingerprint":"a10af08a6d5cae546e3f99d89e0c2295"}}
+{"level":"info","date":"2023-03-08T07:29:20.942Z","pid":10980,"hostname":"Tobias-Laptop","message":"Started socket"}
+{"level":"debug","date":"2023-03-08T07:29:21.897Z","pid":10980,"hostname":"Tobias-Laptop","origin":"database","message":"Connection created","metadata":8}
+{"level":"debug","date":"2023-03-08T07:29:21.898Z","pid":10980,"hostname":"Tobias-Laptop","origin":"database","message":"Connection acquired","metadata":8}
+{"level":"debug","date":"2023-03-08T07:29:22.026Z","pid":10980,"hostname":"Tobias-Laptop","origin":"database","message":"Connection acquired","metadata":8}
+{"level":"debug","date":"2023-03-08T07:29:22.043Z","pid":10980,"hostname":"Tobias-Laptop","origin":"socket","message":"Client established socket.io connection","metadata":{"ip":"::1","userId":37,"hash":"a10af08a6d5cae546e3f99d89e0c2295"}}
+{"level":"debug","date":"2023-03-08T07:29:22.050Z","pid":10980,"hostname":"Tobias-Laptop","origin":"database","message":"Connection acquired","metadata":8}
+{"level":"debug","date":"2023-03-08T07:29:22.055Z","pid":10980,"hostname":"Tobias-Laptop","origin":"database","message":"Connection created","metadata":9}
+{"level":"debug","date":"2023-03-08T07:29:22.056Z","pid":10980,"hostname":"Tobias-Laptop","origin":"database","message":"Connection acquired","metadata":9}
+{"level":"debug","date":"2023-03-08T07:29:22.065Z","pid":10980,"hostname":"Tobias-Laptop","origin":"users","message":"Updated users last seen"}
+{"level":"debug","date":"2023-03-08T07:29:50.428Z","pid":10980,"hostname":"Tobias-Laptop","origin":"scm","message":"Deleted short cache entry","metadata":{"key":"::1","value":"a10af08a6d5cae546e3f99d89e0c2295"}}
+{"level":"info","date":"2023-03-08T07:30:25.280Z","pid":10980,"hostname":"Tobias-Laptop","origin":"socket","message":"Client connected","metadata":{"ip":"::1","fingerprint":"a10af08a6d5cae546e3f99d89e0c2295"}}
+{"level":"debug","date":"2023-03-08T07:30:25.721Z","pid":10980,"hostname":"Tobias-Laptop","origin":"database","message":"Connection acquired","metadata":9}
+{"level":"debug","date":"2023-03-08T07:30:25.725Z","pid":10980,"hostname":"Tobias-Laptop","origin":"database","message":"Connection acquired","metadata":8}
+{"level":"debug","date":"2023-03-08T07:30:25.727Z","pid":10980,"hostname":"Tobias-Laptop","origin":"socket","message":"Client established socket.io connection","metadata":{"ip":"::1","userId":37,"hash":"a10af08a6d5cae546e3f99d89e0c2295"}}
+{"level":"debug","date":"2023-03-08T07:30:25.729Z","pid":10980,"hostname":"Tobias-Laptop","origin":"database","message":"Connection acquired","metadata":8}
+{"level":"debug","date":"2023-03-08T07:30:25.730Z","pid":10980,"hostname":"Tobias-Laptop","origin":"database","message":"Connection acquired","metadata":9}
+{"level":"debug","date":"2023-03-08T07:30:25.735Z","pid":10980,"hostname":"Tobias-Laptop","origin":"users","message":"Updated users last seen"}
+{"level":"info","date":"2023-03-08T07:30:31.983Z","pid":10980,"hostname":"Tobias-Laptop","origin":"socket","message":"Client connected","metadata":{"ip":"::1","fingerprint":"a10af08a6d5cae546e3f99d89e0c2295"}}
+{"level":"debug","date":"2023-03-08T07:30:55.281Z","pid":10980,"hostname":"Tobias-Laptop","origin":"scm","message":"Deleted short cache entry","metadata":{"key":"::1","value":"a10af08a6d5cae546e3f99d89e0c2295"}}
+{"level":"debug","date":"2023-03-08T07:31:01.987Z","pid":10980,"hostname":"Tobias-Laptop","origin":"scm","message":"Deleted short cache entry","metadata":{"key":"::1","value":"a10af08a6d5cae546e3f99d89e0c2295"}}
+{"level":"info","date":"2023-03-08T10:19:17.870Z","pid":17080,"hostname":"Tobias-Laptop","message":"Loaded lastest canvas from file"}
+{"level":"info","date":"2023-03-08T10:19:18.532Z","pid":17080,"hostname":"Tobias-Laptop","message":"Started socket"}
+{"level":"info","date":"2023-03-08T10:19:24.987Z","pid":17080,"hostname":"Tobias-Laptop","origin":"socket","message":"Client connected","metadata":{"ip":"::ffff:127.0.0.1","fingerprint":"a10af08a6d5cae546e3f99d89e0c2295"}}
+{"level":"debug","date":"2023-03-08T10:19:25.149Z","pid":17080,"hostname":"Tobias-Laptop","origin":"database","message":"Connection created","metadata":8}
+{"level":"debug","date":"2023-03-08T10:19:25.149Z","pid":17080,"hostname":"Tobias-Laptop","origin":"database","message":"Connection acquired","metadata":8}
+{"level":"debug","date":"2023-03-08T10:19:25.189Z","pid":17080,"hostname":"Tobias-Laptop","origin":"database","message":"Connection acquired","metadata":8}
+{"level":"debug","date":"2023-03-08T10:19:25.193Z","pid":17080,"hostname":"Tobias-Laptop","origin":"socket","message":"Client established socket.io connection","metadata":{"ip":"::ffff:127.0.0.1","userId":37,"hash":"a10af08a6d5cae546e3f99d89e0c2295"}}
+{"level":"debug","date":"2023-03-08T10:19:25.196Z","pid":17080,"hostname":"Tobias-Laptop","origin":"database","message":"Connection acquired","metadata":8}
+{"level":"debug","date":"2023-03-08T10:19:25.197Z","pid":17080,"hostname":"Tobias-Laptop","origin":"database","message":"Connection created","metadata":9}
+{"level":"debug","date":"2023-03-08T10:19:25.197Z","pid":17080,"hostname":"Tobias-Laptop","origin":"database","message":"Connection acquired","metadata":9}
+{"level":"debug","date":"2023-03-08T10:19:25.203Z","pid":17080,"hostname":"Tobias-Laptop","origin":"users","message":"Updated users last seen"}
+{"level":"debug","date":"2023-03-08T10:19:30.996Z","pid":17080,"hostname":"Tobias-Laptop","origin":"database","message":"Connection acquired","metadata":9}
+{"level":"debug","date":"2023-03-08T10:19:30.997Z","pid":17080,"hostname":"Tobias-Laptop","origin":"database","message":"Connection acquired","metadata":8}
+{"level":"debug","date":"2023-03-08T10:19:31.002Z","pid":17080,"hostname":"Tobias-Laptop","origin":"database","message":"Connection acquired","metadata":8}
+{"level":"debug","date":"2023-03-08T10:19:31.002Z","pid":17080,"hostname":"Tobias-Laptop","origin":"database","message":"Connection acquired","metadata":9}
+{"level":"info","date":"2023-03-08T10:19:31.003Z","pid":17080,"hostname":"Tobias-Laptop","origin":"session","message":"Pixel placed","metadata":{"user":"2246892e-e447-479e-bd27-50ecdcfafb33","x":39,"y":20,"color":[217,217,217]}}
+{"level":"debug","date":"2023-03-08T10:19:31.006Z","pid":17080,"hostname":"Tobias-Laptop","origin":"database","message":"Connection acquired","metadata":9}
+{"level":"info","date":"2023-03-08T14:32:32.674Z","pid":17224,"hostname":"Tobias-Laptop","message":"Loaded lastest canvas from file"}
+{"level":"info","date":"2023-03-08T20:26:02.388Z","pid":3596,"hostname":"Tobias-Laptop","message":"Loaded lastest canvas from file"}
+{"level":"info","date":"2023-03-08T20:26:26.611Z","pid":3596,"hostname":"Tobias-Laptop","origin":"socket","message":"Client connected","metadata":{"ip":"::1","fingerprint":"0619c20cf53cf5d443c807c7220d3894"}}
+{"level":"info","date":"2023-03-08T20:26:26.785Z","pid":3596,"hostname":"Tobias-Laptop","origin":"socket","message":"Client connected","metadata":{"ip":"::1","fingerprint":"3c9c78d55c03ba6d2c63da3fea064739"}}
+{"level":"debug","date":"2023-03-08T20:26:56.622Z","pid":3596,"hostname":"Tobias-Laptop","origin":"scm","message":"Deleted short cache entry","metadata":{"key":"::1","value":"0619c20cf53cf5d443c807c7220d3894"}}
+{"level":"debug","date":"2023-03-08T20:26:56.794Z","pid":3596,"hostname":"Tobias-Laptop","origin":"scm","message":"Deleted short cache entry","metadata":{"key":"::1","value":"3c9c78d55c03ba6d2c63da3fea064739"}}
+{"level":"info","date":"2023-03-08T20:27:03.392Z","pid":3596,"hostname":"Tobias-Laptop","origin":"socket","message":"Client connected","metadata":{"ip":"::1","fingerprint":"1371a31d03041bf775dadf832577fd39"}}
+{"level":"info","date":"2023-03-08T20:27:03.567Z","pid":3596,"hostname":"Tobias-Laptop","origin":"socket","message":"Client connected","metadata":{"ip":"::1","fingerprint":"3c9c78d55c03ba6d2c63da3fea064739"}}
+{"level":"debug","date":"2023-03-08T20:27:33.401Z","pid":3596,"hostname":"Tobias-Laptop","origin":"scm","message":"Deleted short cache entry","metadata":{"key":"::1","value":"1371a31d03041bf775dadf832577fd39"}}
+{"level":"debug","date":"2023-03-08T20:27:33.586Z","pid":3596,"hostname":"Tobias-Laptop","origin":"scm","message":"Deleted short cache entry","metadata":{"key":"::1","value":"3c9c78d55c03ba6d2c63da3fea064739"}}
+{"level":"info","date":"2023-03-08T20:30:07.991Z","pid":3596,"hostname":"Tobias-Laptop","origin":"socket","message":"Client connected","metadata":{"ip":"::1","fingerprint":"1371a31d03041bf775dadf832577fd39"}}
+{"level":"info","date":"2023-03-08T20:30:08.105Z","pid":3596,"hostname":"Tobias-Laptop","origin":"socket","message":"Client connected","metadata":{"ip":"::1","fingerprint":"3c9c78d55c03ba6d2c63da3fea064739"}}
+{"level":"debug","date":"2023-03-08T20:30:37.994Z","pid":3596,"hostname":"Tobias-Laptop","origin":"scm","message":"Deleted short cache entry","metadata":{"key":"::1","value":"1371a31d03041bf775dadf832577fd39"}}
+{"level":"debug","date":"2023-03-08T20:30:38.120Z","pid":3596,"hostname":"Tobias-Laptop","origin":"scm","message":"Deleted short cache entry","metadata":{"key":"::1","value":"3c9c78d55c03ba6d2c63da3fea064739"}}
+{"level":"info","date":"2023-03-08T20:30:57.473Z","pid":3596,"hostname":"Tobias-Laptop","origin":"socket","message":"Client connected","metadata":{"ip":"::1","fingerprint":"1371a31d03041bf775dadf832577fd39"}}
+{"level":"info","date":"2023-03-08T20:30:57.641Z","pid":3596,"hostname":"Tobias-Laptop","origin":"socket","message":"Client connected","metadata":{"ip":"::1","fingerprint":"3c9c78d55c03ba6d2c63da3fea064739"}}
+{"level":"info","date":"2023-03-08T20:31:11.526Z","pid":3596,"hostname":"Tobias-Laptop","origin":"socket","message":"Client connected","metadata":{"ip":"::1","fingerprint":"1371a31d03041bf775dadf832577fd39"}}
+{"level":"info","date":"2023-03-08T20:31:11.646Z","pid":3596,"hostname":"Tobias-Laptop","origin":"socket","message":"Client connected","metadata":{"ip":"::1","fingerprint":"3c9c78d55c03ba6d2c63da3fea064739"}}
+{"level":"debug","date":"2023-03-08T20:31:11.752Z","pid":3596,"hostname":"Tobias-Laptop","origin":"database","message":"Connection created","metadata":8}
+{"level":"debug","date":"2023-03-08T20:31:11.753Z","pid":3596,"hostname":"Tobias-Laptop","origin":"database","message":"Connection acquired","metadata":8}
+{"level":"debug","date":"2023-03-08T20:31:11.839Z","pid":3596,"hostname":"Tobias-Laptop","origin":"database","message":"Connection acquired","metadata":8}
+{"level":"debug","date":"2023-03-08T20:31:11.848Z","pid":3596,"hostname":"Tobias-Laptop","origin":"socket","message":"Client established socket.io connection","metadata":{"ip":"::1","userId":20,"hash":"3c9c78d55c03ba6d2c63da3fea064739"}}
+{"level":"debug","date":"2023-03-08T20:31:11.853Z","pid":3596,"hostname":"Tobias-Laptop","origin":"database","message":"Connection acquired","metadata":8}
+{"level":"debug","date":"2023-03-08T20:31:11.855Z","pid":3596,"hostname":"Tobias-Laptop","origin":"database","message":"Connection created","metadata":9}
+{"level":"debug","date":"2023-03-08T20:31:11.855Z","pid":3596,"hostname":"Tobias-Laptop","origin":"database","message":"Connection acquired","metadata":9}
+{"level":"debug","date":"2023-03-08T20:31:11.863Z","pid":3596,"hostname":"Tobias-Laptop","origin":"users","message":"Updated users last seen"}
+{"level":"debug","date":"2023-03-08T20:31:27.462Z","pid":3596,"hostname":"Tobias-Laptop","origin":"scm","message":"Deleted short cache entry","metadata":{"key":"::1","value":"1371a31d03041bf775dadf832577fd39"}}
+{"level":"debug","date":"2023-03-08T20:31:27.634Z","pid":3596,"hostname":"Tobias-Laptop","origin":"scm","message":"Deleted short cache entry","metadata":{"key":"::1","value":"3c9c78d55c03ba6d2c63da3fea064739"}}
+{"level":"debug","date":"2023-03-08T20:31:41.534Z","pid":3596,"hostname":"Tobias-Laptop","origin":"scm","message":"Deleted short cache entry","metadata":{"key":"::1","value":"1371a31d03041bf775dadf832577fd39"}}
+{"level":"debug","date":"2023-03-08T20:31:41.648Z","pid":3596,"hostname":"Tobias-Laptop","origin":"scm","message":"Deleted short cache entry","metadata":{"key":"::1","value":"3c9c78d55c03ba6d2c63da3fea064739"}}
+{"level":"info","date":"2023-03-08T20:32:02.192Z","pid":3596,"hostname":"Tobias-Laptop","origin":"socket","message":"Client connected","metadata":{"ip":"::1","fingerprint":"1371a31d03041bf775dadf832577fd39"}}
+{"level":"info","date":"2023-03-08T20:32:02.349Z","pid":3596,"hostname":"Tobias-Laptop","origin":"socket","message":"Client connected","metadata":{"ip":"::1","fingerprint":"3c9c78d55c03ba6d2c63da3fea064739"}}
+{"level":"debug","date":"2023-03-08T20:32:02.402Z","pid":3596,"hostname":"Tobias-Laptop","origin":"database","message":"Connection acquired","metadata":9}
+{"level":"debug","date":"2023-03-08T20:32:02.411Z","pid":3596,"hostname":"Tobias-Laptop","origin":"database","message":"Connection acquired","metadata":8}
+{"level":"debug","date":"2023-03-08T20:32:02.414Z","pid":3596,"hostname":"Tobias-Laptop","origin":"socket","message":"Client established socket.io connection","metadata":{"ip":"::1","userId":20,"hash":"3c9c78d55c03ba6d2c63da3fea064739"}}
+{"level":"debug","date":"2023-03-08T20:32:02.415Z","pid":3596,"hostname":"Tobias-Laptop","origin":"database","message":"Connection acquired","metadata":8}
+{"level":"debug","date":"2023-03-08T20:32:02.415Z","pid":3596,"hostname":"Tobias-Laptop","origin":"database","message":"Connection acquired","metadata":9}
+{"level":"debug","date":"2023-03-08T20:32:02.418Z","pid":3596,"hostname":"Tobias-Laptop","origin":"users","message":"Updated users last seen"}
+{"level":"info","date":"2023-03-08T20:32:04.717Z","pid":3596,"hostname":"Tobias-Laptop","origin":"socket","message":"Client connected","metadata":{"ip":"::1","fingerprint":"1371a31d03041bf775dadf832577fd39"}}
+{"level":"info","date":"2023-03-08T20:32:04.863Z","pid":3596,"hostname":"Tobias-Laptop","origin":"socket","message":"Client connected","metadata":{"ip":"::1","fingerprint":"3c9c78d55c03ba6d2c63da3fea064739"}}
+{"level":"debug","date":"2023-03-08T20:32:04.888Z","pid":3596,"hostname":"Tobias-Laptop","origin":"database","message":"Connection acquired","metadata":8}
+{"level":"debug","date":"2023-03-08T20:32:04.889Z","pid":3596,"hostname":"Tobias-Laptop","origin":"database","message":"Connection acquired","metadata":9}
+{"level":"debug","date":"2023-03-08T20:32:04.890Z","pid":3596,"hostname":"Tobias-Laptop","origin":"socket","message":"Client established socket.io connection","metadata":{"ip":"::1","userId":20,"hash":"3c9c78d55c03ba6d2c63da3fea064739"}}
+{"level":"debug","date":"2023-03-08T20:32:04.891Z","pid":3596,"hostname":"Tobias-Laptop","origin":"database","message":"Connection acquired","metadata":9}
+{"level":"debug","date":"2023-03-08T20:32:04.892Z","pid":3596,"hostname":"Tobias-Laptop","origin":"database","message":"Connection acquired","metadata":8}
+{"level":"debug","date":"2023-03-08T20:32:04.894Z","pid":3596,"hostname":"Tobias-Laptop","origin":"users","message":"Updated users last seen"}
+{"level":"debug","date":"2023-03-08T20:32:32.214Z","pid":3596,"hostname":"Tobias-Laptop","origin":"scm","message":"Deleted short cache entry","metadata":{"key":"::1","value":"1371a31d03041bf775dadf832577fd39"}}
+{"level":"debug","date":"2023-03-08T20:32:32.372Z","pid":3596,"hostname":"Tobias-Laptop","origin":"scm","message":"Deleted short cache entry","metadata":{"key":"::1","value":"3c9c78d55c03ba6d2c63da3fea064739"}}

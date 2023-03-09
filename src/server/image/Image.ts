@@ -6,6 +6,7 @@ import * as fs from "fs";
 import {User} from "../user/User";
 import {Server} from "socket.io";
 import {ImageHistory} from "./ImageHistory";
+import {PlaceSocket} from "../web/Socket";
 
 const DateFormatter = require('date-and-time');
 
@@ -53,9 +54,13 @@ export class Image {
         return this.context.getImageData(x, y, 1, 1).data;
     }
 
-    public getFullImage(): Promise<Array<number>> {
-        return new Promise<Array<number>>(resolve =>
-            resolve(this.context.getImageData(0, 0, this.width, this.height).data));
+    public async getChunk(chunkX: number, chunkY: number): Promise<Array<number>> {
+        return this.context.getImageData(
+            chunkX * PlaceSocket.chunkSize,
+            chunkY * PlaceSocket.chunkSize,
+            PlaceSocket.chunkSize,
+            PlaceSocket.chunkSize
+        ).data;
     }
 
     public async loadLatestCanvas(): Promise<void> {

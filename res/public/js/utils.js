@@ -44,6 +44,15 @@ function hexToStr(hex) {
     } : null;
 }
 
+function arrayToRgb(cArray) {
+    return toRgbString(cArray[0], cArray[1], cArray[2]);
+}
+
+function toRgbString(r, g, b) {
+    return `rgb(${r}, ${g}, ${b})`;
+
+}
+
 function lerp(a, b, time) {
     return a * (1 - time) + b * time;
 }

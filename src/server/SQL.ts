@@ -32,8 +32,6 @@ export function query(sql: string,
     });
 }
 
-database.on("acquire", conn =>
-    log().debug("database", `Connection acquired`, conn.threadId));
 database.on("connection", conn =>
     log().debug("database", `Connection created`, conn.threadId));
 database.on('enqueue', () => log().debug("database",

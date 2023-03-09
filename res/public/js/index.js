@@ -1,29 +1,59 @@
 import {io} from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
+import {ChunkedImage} from "./chunkedImage.js";
+import {maxZoom, minZoom, Renderer} from "./renderer.js";
 
-const socket = io();
-
-let minZoom = 20;
-let maxZoom = 200;
-let zoom = minZoom;
-
-let currentColor = "rgb(217, 217, 217)";
-let offsetX = 0;
-let offsetY = 0;
-let imageCache = [];
-let width = 50, height = 50;
-let timeout = Date.now() / 1000;
-let lastSelected = document.querySelector("div[title=Pomodoro]");
+export let width = 50;
+export let height = 50;
 
 const canvas = document.getElementById("canvas");
-canvas.width = canvas.getBoundingClientRect().width;
-canvas.height = canvas.getBoundingClientRect().height;
 const ctx = canvas.getContext("2d");
 
-window.addEventListener('resize', () => {
-    canvas.width = canvas.getBoundingClientRect().width;
-    canvas.height = canvas.getBoundingClientRect().height;
-    setTimeout(() => redrawAll(), 1);
-}, true);
+export const socket = io();
+export let timeout = Date.now() / 1000;
+
+export const image = new ChunkedImage();
+export let renderer;
+
+let currentColor = "rgb(217, 217, 217)";
+let imageCache = [];
+let lastSelected = document.querySelector("div[title=Pomodoro]");
+
+document.addEventListener("DOMContentLoaded", load);
+async function load() {
+    renderer = new Renderer(canvas, ctx);
+    setInterval(() => {
+        const leftTimeout = Math.max(0, timeout - Date.now() / 1000);
+        const seconds = Math.floor(leftTimeout % 60);
+        document.querySelector("div[class=pc-number]").innerText =
+            `${Math.floor(leftTimeout / 60)}:${seconds < 10 ? "0" : ""}${seconds}`;
+    }, 1000);
+
+    socket.on("error", error => {
+        if (error === "invalidHash") return window.location.reload();
+        post("/error", {error});
+    });
+
+    socket.on("timeoutUpdated", t => timeout = t);
+    socket.on("update", (x, y, colorArr) => {
+        const i = (y * height + x) * 4;
+        imageCache[i] = colorArr[0];
+        imageCache[i + 1] = colorArr[1];
+        imageCache[i + 2] = colorArr[2];
+        renderer.renderPixel(x, y, arrayToRgb(colorArr));
+    });
+    socket.on("postStats", async (w, h, cS) => {
+        width = w;
+        height = h;
+        image.chunkSize = cS;
+        await renderer.renderAll();
+    });
+
+    window.addEventListener('resize', () => {
+        canvas.width = canvas.getBoundingClientRect().width;
+        canvas.height = canvas.getBoundingClientRect().height;
+        setTimeout(() => renderer.renderAll(), 1);
+    }, true);
+}
 
 function selectColor(event) {
     currentColor = event.target.style.backgroundColor;
@@ -32,33 +62,6 @@ function selectColor(event) {
     document.getElementById("clr-parent").innerHTML = "";
     lastSelected = event.target;
 }
-
-setInterval(() => {
-    const leftTimeout = Math.max(0, timeout - Date.now() / 1000);
-    const seconds = Math.floor(leftTimeout % 60);
-    document.querySelector("div[class=pc-number]").innerText =
-        `${Math.floor(leftTimeout / 60)}:${seconds < 10 ? "0" : ""}${seconds}`;
-}, 1000);
-
-socket.on("error", error => {
-    if (error === "invalidHash") return window.location.reload();
-    post("/error", {error});
-});
-
-socket.on("timeoutUpdated", t => timeout = t);
-socket.on("update", (x, y, colorArr) => {
-    const i = (y * height + x) * 4;
-    imageCache[i] = colorArr[0];
-    imageCache[i + 1] = colorArr[1];
-    imageCache[i + 2] = colorArr[2];
-    redrawAll();
-});
-socket.on("updateAll", (w, h, buffer) => {
-    width = w;
-    height = h;
-    imageCache = new Uint8Array(buffer);
-    redrawAll();
-});
 
 function createListeners() {
     let scaling = false;
@@ -91,10 +94,15 @@ function createListeners() {
         document.getElementById("colorpicker").style.backgroundColor = currentColor;
     });
 
-    canvas.addEventListener("wheel", e => {
+    canvas.addEventListener("wheel", async e => {
         e.preventDefault();
-        zoom = clamp(Math.floor((zoom - e.deltaY / 100) * 10) / 10, minZoom, maxZoom);
-        redrawAll();
+        const nextZoom = clamp(Math.floor((renderer.zoom - e.deltaY / 100) * 10) / 10, minZoom, maxZoom);
+
+        renderer.offsetX = -((e.clientX - renderer.offsetX) / renderer.zoom * nextZoom - e.clientX);
+        renderer.offsetY = -((e.clientY - renderer.offsetY) / renderer.zoom * nextZoom - e.clientY);
+
+        renderer.zoom = nextZoom;
+        await renderer.renderAll();
     });
     let move = false;
     canvas.addEventListener("mousedown", e => {
@@ -111,27 +119,27 @@ function createListeners() {
         move = false;
     });
 
-    canvas.addEventListener("mousemove", e => {
+    canvas.addEventListener("mousemove", async e => {
         if (!move) return;
 
-        offsetX += e.movementX;
-        offsetY += e.movementY;
-        redrawAll();
+        renderer.offsetX += e.movementX;
+        renderer.offsetY += e.movementY;
+        await renderer.renderAll();
     });
 
     let lastX, lastY;
-    canvas.addEventListener("touchmove", e => {
+    canvas.addEventListener("touchmove", async e => {
         e.preventDefault();
         if (e.touches.length !== 1) return;
         if (lastX && lastY) {
-            offsetX = lerp(offsetX, offsetX + e.touches[0].clientX - lastX, .5);
-            offsetY = lerp(offsetY, offsetY + e.touches[0].clientY - lastY, .5);
+            renderer.offsetX = lerp(renderer.offsetX, renderer.offsetX + e.touches[0].clientX - lastX, .5);
+            renderer.offsetY = lerp(renderer.offsetY, renderer.offsetY + e.touches[0].clientY - lastY, .5);
         }
         lastX = e.touches[0].clientX;
         lastY = e.touches[0].clientY;
-        redrawAll();
+        await renderer.renderAll();
     });
-    canvas.addEventListener("touchend", e => {
+    canvas.addEventListener("touchend", () => {
         lastX = undefined;
         lastY = undefined;
     });
@@ -141,7 +149,7 @@ function createListeners() {
         scaling = true;
     });
 
-    canvas.addEventListener("touchmove", e => {
+    canvas.addEventListener("touchmove", async e => {
         if (e.touches.length !== 2) return;
         const deltaX = e.touches[0].clientX - e.touches[1].clientX;
         const deltaY = e.touches[0].clientY - e.touches[1].clientY;
@@ -150,8 +158,8 @@ function createListeners() {
         const val = Math.abs(currDiff - prevDiff);
 
         if (prevDiff > 0 && val >= 10) {
-            zoom = lerp(zoom, zoom + (currDiff > prevDiff ? 1 : -1) * 25, .02);
-            redrawAll();
+            renderer.zoom = lerp(renderer.zoom, renderer.zoom + (currDiff > prevDiff ? 1 : -1) * 25, .02);
+            await renderer.renderAll();
         }
 
         prevDiff = currDiff;
@@ -167,7 +175,7 @@ function placePixel(event) {
     if (window.location.search !== "?user=admin&userId=0" && timeout > Date.now() / 1000)
         return popup("Woah, slow down there! Wait till the timeout has worn off before you place a pixel again");
 
-    const pixX = Math.floor((event.clientX - offsetX) / zoom), pixY = Math.floor((event.clientY - offsetY) / zoom);
+    const pixX = Math.floor((event.clientX - renderer.offsetX) / renderer.zoom), pixY = Math.floor((event.clientY - renderer.offsetY) / renderer.zoom);
     if (pixX < 0 || pixX >= width || pixY < 0 || pixY > height)
         return popup("You can't place pixels there!");
 
@@ -176,45 +184,6 @@ function placePixel(event) {
         pixY,
         hexToRgb(currentColor)
     );
-}
-
-function redrawAll() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    const negativeOffsetX = -offsetX;
-    const negativeOffsetY = -offsetY;
-    const maxViewWidth = window.innerWidth / zoom;
-    const maxViewHeight = window.innerHeight / zoom;
-    for (let i = clamp(Math.ceil(negativeOffsetX / zoom) - 1, 0, width);
-         i < clamp(Math.ceil(negativeOffsetX / zoom + maxViewWidth), 0, width); i++)
-        for (let j = clamp(Math.ceil(negativeOffsetY / zoom) - 1, 0, height);
-             j < clamp(Math.ceil(negativeOffsetY / zoom + maxViewHeight), 0, height); j++)
-            drawRect(i, j, getPixel(i, j))
-
-    drawGrid();
-}
-
-function getPixel(x, y) {
-    const i = (y * height + x) * 4;
-    return `rgb(${imageCache[i]}, ${imageCache[i + 1]}, ${imageCache[i + 2]}`;
-}
-
-function drawGrid() {
-    if (zoom < minZoom)
-        return;
-
-    let cWidth = canvas.width;
-    let cHeight = canvas.height;
-    ctx.strokeStyle = `rgba(100, 100, 100, ${remap(zoom, minZoom, maxZoom, .3, 1)})`;
-    for (let i = 0; i < cWidth; i += zoom)
-        ctx.strokeRect(clamp(i + offsetX % zoom, offsetX, offsetX + width * zoom), offsetY, 0, height * zoom);
-    for (let i = 0; i < cHeight; i += zoom)
-        ctx.strokeRect(offsetX, clamp(i + offsetY % zoom, offsetY, offsetY + height * zoom), width * zoom, 0);
-}
-
-function drawRect(x, y, color) {
-    ctx.fillStyle = color;
-    ctx.fillRect(x * zoom + offsetX, y * zoom + offsetY, zoom, zoom);
 }
 
 createListeners();

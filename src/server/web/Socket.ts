@@ -22,12 +22,13 @@ async function getCreateUser(ip: string, fingerprint: string): Promise<User | un
 export class PlaceSocket extends Websocket<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData> {
     static readonly width: number = 50;
     static readonly height: number = 50;
+    static readonly chunkSize: number = PlaceSocket.width / 10;
     private readonly image: Image;
     private readonly ipHashes: ShortCacheMap<string, string>;
 
     constructor(port: number) {
         super(port);
-        setTimeout(() => log().info("Started socket"), 1000);
+        log().info("Started socket");
         this.image = new Image(this.socket, PlaceSocket.width, PlaceSocket.height);
         this.ipHashes = new ShortCacheMap<string, string>(30 * 1000);
         this.register().then(() => console.log("Registered"));
@@ -79,32 +80,55 @@ export class PlaceSocket extends Websocket<ClientToServerEvents, ServerToClientE
         }
         log().debug("socket", "Client established socket.io connection", {ip, userId: user.userID, hash});
 
-        this.image.getFullImage().then(img => client.emit("updateAll", PlaceSocket.width, PlaceSocket.height, img));
         user.timeout().then(timeout => client.emit("timeoutUpdated", timeout));
 
-        client.on("mouseDown", async (x, y, color) => {
-            if (x < 0 || x >= PlaceSocket.width || y < 0 || y > PlaceSocket.height) return log().error("edit-session",
-                "User tried to place pixel outside of canvas", {
-                    userId: user.userID,
-                    ip,
-                    hash,
-                    x,
-                    y,
-                    color
-                });
-            if (!(await user.canPlacePixels())) return log().error("edit-session",
-                "User sent pixel modification request while in timeout", {
-                    userId: user.userID,
-                    ip,
-                    hash,
-                    x,
-                    y,
-                    color
-                });
-
-
-            await this.image.setPixel(user, x, y, color); //Todo Validate incoming values
-            client.emit("timeoutUpdated", await user.timeout());
+        client.on("getChunk", async (chunkX, chunkY) => {
+            // ToDo Validate values
+            const data = await this.image.getChunk(chunkX, chunkY);
+            client.emit("postChunk", chunkX, chunkY, data);
         });
+        client.on("mouseDown", (x, y, color) =>
+            this.mouseDown(client, user, x, y, color));
+
+        client.emit("postStats", PlaceSocket.width, PlaceSocket.height, PlaceSocket.chunkSize);
+    }
+
+    private async mouseDown(client: Socket,
+                            user: User,
+                            x: any | undefined | null,
+                            y: any | undefined | null,
+                            color: any | undefined | null) {
+        if (typeof x != "number" || typeof y != "number" || color == undefined || !color[0] || !color[1] || !color[2])
+            return log().error("edit-session", "User sent invalid types", {
+                userId: user.userID,
+                ip: user.currentIp,
+                hash: user.currentHash,
+                x,
+                y,
+                color
+            });
+        if (x < 0 || x >= PlaceSocket.width || y < 0 || y > PlaceSocket.height) return log().error("edit-session",
+            "User tried to place pixel outside of canvas", {
+                userId: user.userID,
+                ip: user.currentIp,
+                hash: user.currentHash,
+                x,
+                y,
+                color
+            });
+
+
+        if (!(await user.canPlacePixels())) return log().error("edit-session",
+            "User sent pixel modification request while in timeout", {
+                userId: user.userID,
+                ip: user.currentIp,
+                hash: user.currentHash,
+                x,
+                y,
+                color
+            });
+
+        await this.image.setPixel(user, x, y, color);
+        client.emit("timeoutUpdated", await user.timeout());
     }
 }
