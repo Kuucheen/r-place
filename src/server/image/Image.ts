@@ -107,6 +107,7 @@ export class Image {
         log().debug("image", "Searching for compressible folders");
         const newestFolder = DateFormatter.format(new Date(), "YYYY-MM-DD");
         fs.readdirSync(`./cache/canvas`).forEach(folder => {
+            if (folder.endsWith(".tar.gz")) return;
             if (folder != newestFolder)
                 this.compressFolder(folder);
         });
